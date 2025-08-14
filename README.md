@@ -26,12 +26,8 @@ pip install pytest
 pyest <filename.py>
 ```
 
-
-## Grouping(Tagging)
-- Test cases should be created within specific folders for ease of organisation.
-
-
 ## Running multiple tests
+- Test cases should be created within specific folders for ease of organisation.
 - To run multiple test files, the folder can be used within the terminal command.
     - Note: In order for this to work, the test filename(s) must begin with the string 'test_'.
 ```shell
@@ -140,6 +136,81 @@ automated_tests/test_case_one.py::test_case_3 SKIPPED (Test to be fixed at a lat
 automated_tests/test_case_one.py::test_case_4 SKIPPED (Test to be fixed at a later date.)
 automated_tests/test_case_two.py::test_case_2 Second test case
 PASSED
+```
+
+## Grouping(Tagging)
+- Test a sub set for all tests for a given reason.
+- **Tags** are used to create groups, for testing specific groups of tests.
+  - Use decorator `@pytest.mark.<string>`
+```shell
+@pytest.mark.Smoke
+@pytest.mark.Sanity
+```
+- Create `pytest.ini` file to add new tags, to prevent warnings and errors:
+```shell
+[pytest]
+markers =
+    Smoke: mark a test as part of the smoke test suite
+    Sanity: mark a test as part of the sanity test suite
+```
+- Execute test cases based on tags:
+  - Use `pytest -s -v -m <tag> <test_folder_name>`
+```shell
+pytest -s -v -m Smoke automated_tests
+```
+```shell
+automated_tests/test_case_four.py::test_case_7 Seventh test case - Smoke
+PASSED
+automated_tests/test_case_one.py::test_case_1 First test case - Smoke
+PASSED
+automated_tests/test_case_one.py::test_case_4 SKIPPED (Test to be fixed at a later date.)
+automated_tests/test_case_three.py::test_case_5 Fifth test case - Smoke
+PASSED
+
+============================ 3 passed, 1 skipped, 3 deselected in 0.03s ============================
+```
+
+### Skip test cases based on tags
+  - Use `pytest -s -v -m <"not tag"> <test_folder_name>`
+```shell
+pytest -s -v -m "not Smoke" automated_tests
+```
+```shell
+automated_tests/test_case_one.py::test_case_3 SKIPPED (Test to be fixed at a later date.)
+automated_tests/test_case_three.py::test_case_6 Sixth test case - Sanity
+PASSED
+automated_tests/test_case_two.py::test_case_2 Second test case - Sanity
+PASSED
+============================ 2 passed, 1 skipped, 4 deselected in 0.03s ============================
+```
+### Run test on a set of tags
+  - Use `pytest -s -v -m <"tag_1 or tag_2"> <test_folder_name>`
+```shell
+pytest -s -v -m "Smoke or Sanity" automated_tests
+```
+```shell
+automated_tests/test_case_four.py::test_case_7 Seventh test case - Smoke
+PASSED
+automated_tests/test_case_one.py::test_case_1 First test case - Smoke
+PASSED
+automated_tests/test_case_one.py::test_case_3 SKIPPED (Test to be fixed at a later date.)
+automated_tests/test_case_one.py::test_case_4 SKIPPED (Test to be fixed at a later date.)
+automated_tests/test_case_three.py::test_case_5 Fifth test case - Smoke
+PASSED
+automated_tests/test_case_three.py::test_case_6 Sixth test case - Sanity
+PASSED
+automated_tests/test_case_two.py::test_case_2 Second test case - Sanity
+PASSED
+============================ 5 passed, 2 skipped in 0.03s ============================
+```
+### Run test on compound tags
+```shell
+pytest -s -v -m "Smoke and Regression" automated_tests
+```
+```shell
+automated_tests/test_case_four.py::test_case_7 Seventh test case - Smoke
+PASSED
+============================ 1 passed, 6 skipped in 0.02s ============================
 ```
 
 ## Fixtures and Assertions

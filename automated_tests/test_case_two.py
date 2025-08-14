@@ -1,3 +1,6 @@
+import pytest
 
+
+@pytest.mark.Sanity
 def test_case_2():
-    print('Second test case')
+    print('Second test case - Sanity')
